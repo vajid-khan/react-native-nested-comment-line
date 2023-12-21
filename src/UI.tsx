@@ -335,7 +335,7 @@ export const TopRowLeftBorderOuterSVG = ({
 };
 
 export const HorizontalTierSVG = ({ nested }: { nested: number }) => {
-  const radius = 28;
+  const radius = 30;
   return (
     <Svg
       height={radius}
@@ -349,12 +349,11 @@ export const HorizontalTierSVG = ({ nested }: { nested: number }) => {
     >
       {/* Draw the curve */}
       <Path
-        d={`M${radius},${
-          radius
-        } a${radius},${radius} 0 0,1 -${radius},-${radius}`}
+        d={`M${radius},${radius} a${radius},${radius} 0 0,1 -${radius},-${radius}`}
         stroke="#d9d9d9"
         strokeWidth="4"
         fill="transparent"
+        strokeLinecap="round"
       />
     </Svg>
   );

@@ -1,11 +1,5 @@
 import React, { useCallback } from "react";
-import {
-  Dimensions,
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import {
   getLastChildCommentId,
   getLastChildCommentIdFromParent,
@@ -13,13 +7,73 @@ import {
 import Comment from "./src/Comment";
 import { comments } from "./data";
 
-const dimensions = Dimensions.get("window");
-
 const App = () => {
   const keyExtractor = useCallback((item: any) => item.id, []);
 
+  const renderComments = ({
+    item,
+    index,
+    nested = 0,
+    isMain,
+  }: {
+    item: any;
+    index: number;
+    nested: number;
+    isMain?: boolean;
+  }) => {
+    let props = {};
+    if (isMain) {
+      props = {
+        isParent: true,
+        isParentLast: false,
+        parentCommentLength: 0,
+        isLast: item.id === comments[comments?.length - 1].id,
+      };
+    }
+
+    return (
+      <>
+        <Comment
+          comment={item}
+          hasChildren={item?.child_comments?.length > 0}
+          index={index}
+          key={item.id}
+          lastCommentParentId={getLastChildCommentIdFromParent(item)}
+          lastCommentGrandId={getLastChildCommentId(item)}
+          nested={nested}
+          isParentLast={
+            item.id ===
+            item.child_comments?.[item.child_comments.length - 1]?.id
+          }
+          isParent={item?.child_comments?.length > 0}
+          parentCommentLength={item?.child_comments?.length || 0}
+          totalChildren={item?.child_comments?.length || 0}
+          isLast={
+            item.id ===
+            item.child_comments?.[item.child_comments.length - 1]?.id
+          }
+          {...props}
+        />
+
+        {item.child_comments?.map((c: any, i: number) =>
+          renderComments({
+            item: c,
+            index: i,
+            nested: nested + 1,
+          })
+        )}
+      </>
+    );
+  };
+
   const renderItems = useCallback(
     ({ item, index }: { item: any; index: number }) => {
+      // return renderComments({
+      //   item,
+      //   index,
+      //   nested: 0,
+      //   isMain: true,
+      // });
       return (
         <>
           {!item.parent_comment_id ? (
